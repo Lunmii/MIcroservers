@@ -3,7 +3,6 @@ package handlers
 import (
 	"Learning_Microservices/data"
 	"context"
-	"fmt"
 	"net/http"
 )
 
@@ -11,21 +10,22 @@ func (p Products) MiddlewareValidateProduct(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
 		prod := &data.Product{}
 
-		err := prod.FromJSON(r.Body)
+		err := data.FromJSON(prod, r.Body)
 		if err != nil {
 			p.l.Println("[ERROR] deserializing product", err)
-			http.Error(rw, "Error reading product", http.StatusBadRequest)
+
+			rw.WriteHeader(http.StatusBadRequest)
+			data.ToJSON(&GenericError{Message: err.Error()}, rw)
 			return
 		}
 
-		err = prod.Validate()
-		if err != nil {
-			p.l.Println("[ERROR] validating product", err)
-			http.Error(
-				rw,
-				fmt.Sprintf("Error validating product: %s", err),
-				http.StatusBadRequest,
-			)
+		errs := p.v.Validate(prod)
+		if len(errs) != 0 {
+
+			p.l.Println("[ERROR] validating product", errs)
+
+			rw.WriteHeader(http.StatusUnprocessableEntity)
+			data.ToJSON(&ValidationError{Message: err.Error()}, rw)
 			return
 		}
 
