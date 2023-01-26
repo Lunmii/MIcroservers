@@ -2,6 +2,13 @@ basePath: /
 consumes:
     - application/json
 definitions:
+    GenericError:
+        properties:
+            message:
+                type: string
+                x-go-name: Message
+        type: object
+        x-go-package: Learning_Microservices/handlers
     Product:
         properties:
             decription:
@@ -73,6 +80,18 @@ paths:
 produces:
     - application/json
 responses:
+    errorResponse:
+        description: ""
+        headers:
+            Body: {}
+        schema:
+            $ref: '#/definitions/GenericError'
+    productResponse:
+        description: ""
+        headers:
+            Body: {}
+        schema:
+            $ref: '#/definitions/Product'
     productsResponse:
         description: A list of products return in the response
         schema:

@@ -16,6 +16,7 @@ package handlers
 
 import "Learning_Microservices/data"
 
+// swagger:response errorResponse
 type errorResponseWrapper struct {
 	Body GenericError
 }
@@ -30,10 +31,12 @@ type productsResponseWrapper struct {
 type noContentResponseWrapper struct {
 }
 
+// swagger:response productResponse
 type productParamsWrapper struct {
 	Body data.Product
 }
 
+// swagger:parameters listSingleProduct deleteProduct
 type productIDParamsWrapper struct {
 	ID int `json:"id"`
 }
